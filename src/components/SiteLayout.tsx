@@ -37,7 +37,7 @@ export function SiteHeader({ currentPage, practiceAreas }: HeaderProps) {
       children: practiceAreas.map((area) => ({ label: area.title, path: `/practice-areas/${area.slug}` })),
     },
     { label: 'The Newsroom', page: 'newsroom', path: '/newsroom' },
-    { label: 'Our People', page: 'team', path: '/team' },
+    { label: 'The Team', page: 'team', path: '/team' },
     { label: 'Contact', page: 'contact', path: '/contact' },
   ];
 
@@ -211,8 +211,11 @@ export function SiteFooter() {
     { label: 'About Us', path: '/about' },
     { label: 'Practice Areas', path: '/practice-areas' },
     { label: 'The Newsroom', path: '/newsroom' },
-    { label: 'Our People', path: '/team' },
+    { label: 'The Team', path: '/team' },
     { label: 'Contact', path: '/contact' },
+    { label: 'Privacy Policy', path: '/privacy-policy' },
+    { label: 'Disclaimer', path: '/disclaimer' },
+    { label: 'Careers', path: '/careers' },
   ];
 
   return (
@@ -223,7 +226,7 @@ export function SiteFooter() {
             <img src="/Tornaritis-Law-Firm-Logo-Revised.png" alt="Tornaritis Law Firm" className="h-auto w-[200px] brightness-0 invert" />
           </button>
           <p className="mt-5 max-w-xs text-sm leading-6 text-white/50">
-            Independent legal counsel for people and businesses with somewhere to go.
+            We conduct our work with a high degree of professionalism and dedication, and provide an expert, sensitive service.
           </p>
           <div className="mt-5 flex gap-3">
             <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-[#b90046] hover:text-[#b90046]" aria-label="LinkedIn">
@@ -232,7 +235,7 @@ export function SiteFooter() {
             <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-[#b90046] hover:text-[#b90046]" aria-label="Twitter">
               <Twitter size={16} />
             </a>
-            <a href="mailto:info@tornaritislaw.com" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-[#b90046] hover:text-[#b90046]" aria-label="Email">
+            <a href="mailto:office@tornaritislaw.com" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-[#b90046] hover:text-[#b90046]" aria-label="Email">
               <Mail size={16} />
             </a>
           </div>
@@ -256,10 +259,11 @@ export function SiteFooter() {
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/50">Nicosia Office</p>
           <div className="mt-4 space-y-2 text-sm text-white/60">
-            <p>12 Evagoras Avenue<br />1097 Nicosia, Cyprus</p>
-            <p>info@tornaritislaw.com</p>
-            <p>+357 22 123 456</p>
-            <p className="pt-2 text-white/40">Mon–Fri 09:00–17:00 EET</p>
+            <p>16 Stasikratous<br />1065 Nicosia, Cyprus</p>
+            <p>office@tornaritislaw.com</p>
+            <p>+357 22 456 056</p>
+            <p>Fax: +357 22 664 056</p>
+            <p className="pt-2 text-white/40">Mon–Thu 08:30–13:00 & 14:00–17:30<br />Fri 08:30–14:00</p>
           </div>
         </div>
 
@@ -267,7 +271,7 @@ export function SiteFooter() {
       </div>
 
       <div className="mx-auto mt-14 flex max-w-[1200px] flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-[10px] uppercase tracking-[0.14em] text-white/40 sm:flex-row">
-        <span>© 2024 Tornaritis Law Firm. All rights reserved.</span>
+        <span>© 2025 Tornaritis & Co LLC. All rights reserved.</span>
         <span>Nicosia · Cyprus</span>
       </div>
     </footer>

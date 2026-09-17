@@ -85,6 +85,6 @@ export type AdminUser = {
   created_at: string;
 };
 
-export type Page = 'home' | 'about' | 'practice' | 'practice-detail' | 'newsroom' | 'news-detail' | 'team' | 'contact' | 'admin';
+export type Page = 'home' | 'about' | 'practice' | 'practice-detail' | 'newsroom' | 'news-detail' | 'team' | 'contact' | 'legal' | 'admin';
 
 export type AppRoute = { page: Page; slug?: string };

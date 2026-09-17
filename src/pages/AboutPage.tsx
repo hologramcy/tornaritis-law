@@ -44,20 +44,22 @@ export function AboutPage() {
             <span className="inline-flex items-center rounded-full bg-[#b90046] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
               Our founder
             </span>
-            <h2 className="mt-5 font-serif text-4xl text-[#273237]">Criton Tornaritis</h2>
-            <div className="mt-6 space-y-5 text-[15px] leading-7 text-[#687277]">
-              <p>
-                Criton Tornaritis (1902–1997) was one of the most important Cypriot legal scientists. He served the
-                Cypriot legal system as a lawyer, a Judge and the first Attorney General of the Republic of Cyprus.
-              </p>
-              <p>
-                His work helped shape the legal foundations of the Republic. His deep commitment to public service,
-                scholarship and the practice of law remains part of our character today.
-              </p>
-              <p>
-                We continue to build on that legacy with a modern outlook, specialist expertise and a clear sense of
-                responsibility to our clients and our community.
-              </p>
+          <h2 className="mt-5 font-serif text-4xl text-[#273237]">Criton Tornaritis</h2>
+          <div className="mt-6 space-y-5 text-[15px] leading-7 text-[#687277]">
+            <p>
+              Criton Tornaritis (1902–1997) was one of the most important Cypriot legal scientists. He served the
+              Cypriot legal system as a lawyer, a Judge and the first and longest-serving Attorney General of the
+              Republic of Cyprus.
+            </p>
+            <p>
+              He gathered and prepared the Acts of Law retained in force with the establishment of the Republic of
+              Cyprus, forming the backbone of the Cypriot legal system. He has been described as the architect of the
+              Cypriot legal system.
+            </p>
+            <p>
+              We continue to build on that legacy with a modern outlook, specialist expertise and a clear sense of
+              responsibility to our clients and our community.
+            </p>
             </div>
           </div>
         </div>
@@ -73,6 +75,33 @@ export function AboutPage() {
           >
             Meet the team <ArrowRight size={15} />
           </button>
+        </div>
+
+        <div className="mt-16 grid gap-10 lg:grid-cols-2">
+          <div>
+            <p className="eyebrow">The mission</p>
+            <h2 className="mt-4 font-serif text-4xl text-[#273237]">Quality legal services, delivered with care.</h2>
+            <div className="mt-6 space-y-5 text-[15px] leading-7 text-[#687277]">
+              <p>
+                We aim to provide quality legal services to clients around the world, operating under the highest
+                ethical standards with the principles of time and cost-efficiency in mind.
+              </p>
+              <p>
+                Our breadth of experience enables us to offer a wide range of skills to suit the individual needs and
+                demands of each client. We conduct our work with a high degree of professionalism and dedication.
+              </p>
+            </div>
+          </div>
+          <div>
+            <p className="eyebrow">International work</p>
+            <h2 className="mt-4 font-serif text-4xl text-[#273237]">Foreign related legal services.</h2>
+            <ul className="mt-6 space-y-3 text-[15px] leading-7 text-[#687277]">
+              <li>We develop and sustain relationships with high-profile partners in major international law firms.</li>
+              <li>We provide whole-journey legal services for domestic and overseas investment projects.</li>
+              <li>We cooperate with one of the world’s largest global law firms and with UHY London offices on insolvency proceedings.</li>
+              <li>We provide legal services for banks and financial institutions in Canada, the UK, Romania, Lebanon and Hong Kong.</li>
+            </ul>
+          </div>
         </div>
       </section>
 

@@ -23,14 +23,14 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
         <div className="relative mx-auto flex min-h-[680px] max-w-[1440px] items-center px-6 lg:px-12">
           <div className="max-w-2xl">
             <p className="mb-7 flex animate-fade-up items-center gap-3 text-[11px] font-bold uppercase tracking-[0.3em] text-[#df8eae]">
-              <span className="h-px w-12 bg-[#b90046]" /> Established in 1924
+              <span className="h-px w-12 bg-[#b90046]" /> Three generations of lawyers
             </p>
             <h1 className="animate-fade-up font-serif text-5xl leading-[.98] text-white delay-1 sm:text-6xl lg:text-[88px]">
-              A different kind<br /><span className="text-gradient">of counsel.</span>
+              A leading Cyprus<br /><span className="text-gradient">law firm.</span>
             </h1>
             <p className="mt-8 max-w-lg animate-fade-up text-base leading-7 text-white/70 delay-2">
-              Tornaritis Law Firm is a modern law firm for people and businesses moving with purpose. We bring clarity
-              to complexity and confidence to every decision.
+              Tornaritis provides high-stakes international legal services to local and international clients, with
+              premier-quality work product and sophisticated legal counsel.
             </p>
             <div className="mt-10 flex animate-fade-up items-center gap-4 delay-3">
               <button
@@ -56,8 +56,8 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
         <div className="mx-auto grid max-w-[1200px] grid-cols-2 lg:grid-cols-4">
           {[
             { icon: Award, value: '100+', label: 'Years of practice' },
-            { icon: Users, value: '18', label: 'Specialist lawyers' },
-            { icon: Building2, value: '6', label: 'Practice areas' },
+            { icon: Users, value: '11', label: 'Committed professionals' },
+            { icon: Building2, value: String(practiceAreas.length || 16), label: 'Practice areas' },
             { icon: Scale, value: '01', label: 'Uncompromising standard' },
           ].map((stat, i) => (
             <div
@@ -87,7 +87,7 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
           </div>
           <p className="max-w-xl text-lg leading-8 text-[#687277]">
             From banking and finance to dispute resolution, our lawyers bring a depth of experience and a practical
-            mindset to the work that matters most.
+            mindset to the work that matters most to businesses, institutions and individuals.
           </p>
         </div>
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -189,7 +189,7 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#df8eae]">Let's talk</p>
             <h2 className="mt-4 font-serif text-4xl lg:text-5xl">Your next move starts here.</h2>
-            <p className="mt-4 max-w-md text-base text-white/50">Tell us where you want to go. We'll help you find the clearest way there.</p>
+            <p className="mt-4 max-w-md text-base text-white/50">Our specialists will gladly assist you with your inquiries.</p>
           </div>
           <button
             onClick={() => navigateTo('/contact')}

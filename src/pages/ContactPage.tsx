@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calendar, Mail, MapPin, Phone, Clock, CheckCircle2 } from 'lucide-react';
+import { Mail, MapPin, Phone, Clock, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { PageHeader } from '@/components/PageHeader';
 
@@ -50,10 +50,10 @@ export function ContactPage() {
   };
 
   const contactInfo = [
-    { icon: MapPin, label: 'Nicosia', value: '12 Evagoras Avenue, 1097 Nicosia, Cyprus' },
-    { icon: Mail, label: 'Email', value: 'info@tornaritislaw.com', href: 'mailto:info@tornaritislaw.com' },
-    { icon: Phone, label: 'Phone', value: '+357 22 123 456' },
-    { icon: Clock, label: 'Hours', value: 'Monday – Friday, 09:00 – 17:00 EET' },
+    { icon: MapPin, label: 'Nicosia', value: '16 Stasikratous, 1065 Nicosia, Cyprus' },
+    { icon: Mail, label: 'Email', value: 'office@tornaritislaw.com', href: 'mailto:office@tornaritislaw.com' },
+    { icon: Phone, label: 'Phone', value: '+357 22 456 056' },
+    { icon: Clock, label: 'Hours', value: 'Monday – Thursday 08:30 – 13:00 & 14:00 – 17:30; Friday 08:30 – 14:00' },
   ];
 
   return (
