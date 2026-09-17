@@ -62,7 +62,7 @@ export function ContactPage() {
         <p>Tell us where you want to go. We will help you find the clearest way there.</p>
       </PageHeader>
 
-      <section className="mx-auto grid max-w-[1050px] gap-12 px-6 py-20 lg:grid-cols-[.85fr_1.15fr] lg:px-12">
+      <section className="mx-auto grid max-w-[1440px] gap-12 px-6 py-20 lg:grid-cols-[.85fr_1.15fr] lg:px-12">
         {/* Contact info */}
         <div>
           <p className="eyebrow">Our offices</p>

@@ -15,7 +15,7 @@ export function TeamPage({ members }: TeamProps) {
         </p>
       </PageHeader>
 
-      <section className="mx-auto max-w-[1050px] px-6 py-20 lg:px-12">
+      <section className="mx-auto max-w-[1440px] px-6 py-20 lg:px-12">
         {members.length === 0 ? (
           <p className="py-20 text-center text-sm text-[#687277]">Team profiles will appear here soon.</p>
         ) : (

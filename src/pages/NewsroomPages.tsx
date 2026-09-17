@@ -16,7 +16,7 @@ export function NewsroomPage({ posts }: NewsroomProps) {
         </p>
       </PageHeader>
 
-      <section className="mx-auto max-w-[1050px] px-6 py-20 lg:px-12">
+      <section className="mx-auto max-w-[1440px] px-6 py-20 lg:px-12">
         {posts.length === 0 ? (
           <p className="py-20 text-center text-sm text-[#687277]">No articles have been published yet.</p>
         ) : (
@@ -73,7 +73,7 @@ export function NewsDetailPage({ post, otherPosts }: NewsDetailProps) {
   return (
     <main>
       <section className="page-header px-6 py-20 lg:px-12 lg:py-28">
-        <div className="relative mx-auto max-w-[800px]">
+        <div className="relative mx-auto max-w-[1440px]">
           <button
             onClick={() => navigateTo('/newsroom')}
             className="text-xs font-bold uppercase tracking-[0.14em] text-[#b90046] transition-opacity hover:opacity-70"
@@ -97,12 +97,12 @@ export function NewsDetailPage({ post, otherPosts }: NewsDetailProps) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[700px] px-6 py-16 lg:px-12">
-        <div className="prose-content whitespace-pre-wrap text-[15px] leading-8 text-[#3b4246]">{post.body}</div>
+      <section className="mx-auto max-w-[1440px] px-6 py-16 lg:px-12">
+        <div className="prose-content mx-auto max-w-[800px] whitespace-pre-wrap text-[15px] leading-8 text-[#3b4246]">{post.body}</div>
       </section>
 
       <section className="border-t border-[#d9ddde] bg-[#f0f3f3] px-6 py-16 lg:px-12">
-        <div className="mx-auto max-w-[900px]">
+        <div className="mx-auto max-w-[1440px]">
           <h2 className="font-serif text-3xl text-[#273237]">More from the Newsroom</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {otherPosts

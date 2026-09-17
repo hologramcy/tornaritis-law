@@ -220,7 +220,7 @@ export function SiteFooter() {
 
   return (
     <footer className="bg-[#0f1113] px-6 py-16 text-white lg:px-12">
-      <div className="mx-auto grid max-w-[1200px] gap-12 md:grid-cols-[1.2fr_1fr_1fr_1.2fr]">
+      <div className="mx-auto grid max-w-[1440px] gap-12 md:grid-cols-[1.2fr_1fr_1fr_1.2fr]">
         <div>
           <button onClick={() => navigateTo('/')}>
             <img src="/Tornaritis-Law-Firm-Logo-Revised.png" alt="Tornaritis Law Firm" className="h-auto w-[200px] brightness-0 invert" />
@@ -270,7 +270,7 @@ export function SiteFooter() {
         <NewsletterSignup />
       </div>
 
-      <div className="mx-auto mt-14 flex max-w-[1200px] flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-[10px] uppercase tracking-[0.14em] text-white/40 sm:flex-row">
+      <div className="mx-auto mt-14 flex max-w-[1440px] flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-[10px] uppercase tracking-[0.14em] text-white/40 sm:flex-row">
         <span>© 2025 Tornaritis & Co LLC. All rights reserved.</span>
         <span>Nicosia · Cyprus</span>
       </div>

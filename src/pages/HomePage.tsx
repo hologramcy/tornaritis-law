@@ -53,7 +53,7 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
 
       {/* Stats bar */}
       <section className="border-b border-[#e7e9ea] bg-white">
-        <div className="mx-auto grid max-w-[1200px] grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-[1440px] grid-cols-2 px-6 lg:grid-cols-4 lg:px-12">
           {[
             { icon: Award, value: '100+', label: 'Years of practice' },
             { icon: Users, value: '11', label: 'Committed professionals' },
@@ -79,7 +79,7 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
       </section>
 
       {/* Practice areas */}
-      <section className="mx-auto max-w-[1200px] px-6 py-24 lg:px-12">
+      <section className="mx-auto max-w-[1440px] px-6 py-24 lg:px-12">
         <div className="grid gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
           <div>
             <p className="eyebrow">Our expertise</p>
@@ -116,7 +116,7 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
 
       {/* About teaser */}
       <section className="bg-[#f0f3f3] px-6 py-24 lg:px-12">
-        <div className="mx-auto grid max-w-[1200px] gap-14 lg:grid-cols-2 lg:items-center">
+        <div className="mx-auto grid max-w-[1440px] gap-14 px-6 lg:grid-cols-2 lg:items-center lg:px-12">
           <div className="img-zoom relative overflow-hidden rounded-2xl">
             <img
               className="h-[440px] w-full object-cover"
@@ -149,7 +149,7 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
 
       {/* Newsroom preview */}
       {newsroomPosts.length > 0 && (
-        <section className="mx-auto max-w-[1200px] px-6 py-24 lg:px-12">
+        <section className="mx-auto max-w-[1440px] px-6 py-24 lg:px-12">
           <div className="flex items-end justify-between border-b border-[#d9ddde] pb-6">
             <div>
               <p className="eyebrow">Latest insights</p>
@@ -185,7 +185,7 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
       <section className="relative overflow-hidden bg-[#0f1113] px-6 py-24 text-white lg:px-12">
         <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full border border-[#b90046]/15" />
         <div className="absolute -right-8 -top-8 h-48 w-48 rounded-full border border-[#b90046]/15" />
-        <div className="relative mx-auto flex max-w-[1200px] flex-col justify-between gap-8 md:flex-row md:items-center">
+        <div className="relative mx-auto flex max-w-[1440px] flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#df8eae]">Let's talk</p>
             <h2 className="mt-4 font-serif text-4xl lg:text-5xl">Your next move starts here.</h2>

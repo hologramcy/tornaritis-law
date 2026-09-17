@@ -27,7 +27,7 @@ export function AboutPage() {
         </p>
       </PageHeader>
 
-      <section className="mx-auto max-w-[1050px] px-6 py-20 lg:px-12">
+      <section className="mx-auto max-w-[1440px] px-6 py-20 lg:px-12">
         <div className="grid gap-14 lg:grid-cols-[.95fr_1.05fr] lg:items-start">
           <div className="img-zoom relative overflow-hidden rounded-2xl">
             <img
@@ -106,7 +106,7 @@ export function AboutPage() {
       </section>
 
       <section className="bg-[#f0f3f3] px-6 py-20 lg:px-12">
-        <div className="mx-auto max-w-[1050px]">
+        <div className="mx-auto max-w-[1440px]">
           <p className="eyebrow">Our network</p>
           <h2 className="mt-4 font-serif text-4xl text-[#273237]">Affiliations, associations & awards</h2>
           <p className="mt-5 max-w-3xl text-sm leading-7 text-[#687277]">
