@@ -90,7 +90,7 @@ export function PracticeDetailPage({ area, otherAreas }: PracticeDetailProps) {
       </section>
 
       <section className="mx-auto max-w-[1440px] px-6 py-16 lg:px-12">
-        <div className="prose-content mx-auto max-w-[800px] whitespace-pre-wrap text-[15px] leading-8 text-[#3b4246]">
+        <div className="prose-content w-full whitespace-pre-wrap text-[15px] leading-8 text-[#3b4246]">
           {area.body}
         </div>
       </section>
