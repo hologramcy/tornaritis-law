@@ -9,7 +9,7 @@ type PageHeaderProps = {
 export function PageHeader({ badge, title, children }: PageHeaderProps) {
   return (
     <section className="page-header px-6 py-24 lg:px-12 lg:py-32">
-      <div className="relative mx-auto max-w-[1440px] text-center">
+      <div className="relative mx-auto max-w-[1600px] text-center">
         <span className="inline-flex animate-fade-up items-center rounded-full bg-[#b90046] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white">
           {badge}
         </span>

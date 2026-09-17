@@ -17,7 +17,7 @@ export function PracticePage({ practiceAreas }: PracticeProps) {
         </p>
       </PageHeader>
 
-      <section className="mx-auto max-w-[1440px] px-6 py-20 lg:px-12">
+      <section className="mx-auto max-w-[1600px] px-6 py-20 lg:px-12">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {practiceAreas.map((area, i) => (
             <button
@@ -48,7 +48,7 @@ export function PracticePage({ practiceAreas }: PracticeProps) {
 
       <section className="relative overflow-hidden bg-[#1a2e35] px-6 py-20 text-white lg:px-12">
         <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full border border-white/10" />
-        <div className="relative mx-auto flex max-w-[1440px] flex-col justify-between gap-8 md:flex-row md:items-center">
+        <div className="relative mx-auto flex max-w-[1600px] flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#df8eae]">Need a clearer path?</p>
             <h2 className="mt-4 font-serif text-4xl">Talk to our team.</h2>
@@ -74,7 +74,7 @@ export function PracticeDetailPage({ area, otherAreas }: PracticeDetailProps) {
   return (
     <main>
       <section className="page-header px-6 py-20 lg:px-12 lg:py-28">
-        <div className="relative mx-auto max-w-[1440px]">
+        <div className="relative mx-auto max-w-[1600px]">
           <button
             onClick={() => navigateTo('/practice-areas')}
             className="text-xs font-bold uppercase tracking-[0.14em] text-[#b90046] transition-opacity hover:opacity-70"
@@ -89,14 +89,14 @@ export function PracticeDetailPage({ area, otherAreas }: PracticeDetailProps) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1440px] px-6 py-16 lg:px-12">
+      <section className="mx-auto max-w-[1600px] px-6 py-16 lg:px-12">
         <div className="prose-content w-full whitespace-pre-wrap text-[15px] leading-8 text-[#3b4246]">
           {area.body}
         </div>
       </section>
 
       <section className="border-t border-[#d9ddde] bg-[#f0f3f3] px-6 py-16 lg:px-12">
-        <div className="mx-auto max-w-[1440px]">
+        <div className="mx-auto max-w-[1600px]">
           <h2 className="font-serif text-3xl text-[#273237]">Other practice areas</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {otherAreas
