@@ -27,7 +27,8 @@ export function AboutPage() {
         </p>
       </PageHeader>
 
-      <section className="mx-auto max-w-[1600px] px-6 py-20 lg:px-12">
+      <section className="px-6 py-20 lg:px-12">
+        <div className="mx-auto max-w-[1600px]">
         <div className="grid gap-14 lg:grid-cols-[.95fr_1.05fr] lg:items-start">
           <div className="img-zoom relative overflow-hidden rounded-2xl">
             <img
@@ -102,6 +103,7 @@ export function AboutPage() {
               <li>We provide legal services for banks and financial institutions in Canada, the UK, Romania, Lebanon and Hong Kong.</li>
             </ul>
           </div>
+        </div>
         </div>
       </section>
 

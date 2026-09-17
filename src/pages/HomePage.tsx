@@ -79,7 +79,8 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
       </section>
 
       {/* Practice areas */}
-      <section className="mx-auto max-w-[1600px] px-6 py-24 lg:px-12">
+      <section className="px-6 py-24 lg:px-12">
+        <div className="mx-auto max-w-[1600px]">
         <div className="grid gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
           <div>
             <p className="eyebrow">Our expertise</p>
@@ -112,11 +113,12 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
             </button>
           ))}
         </div>
+        </div>
       </section>
 
       {/* About teaser */}
       <section className="bg-[#f0f3f3] px-6 py-24 lg:px-12">
-        <div className="mx-auto grid max-w-[1600px] gap-14 px-6 lg:grid-cols-2 lg:items-center lg:px-12">
+        <div className="mx-auto grid max-w-[1600px] gap-14 lg:grid-cols-2 lg:items-center">
           <div className="img-zoom relative overflow-hidden rounded-2xl">
             <img
               className="h-[440px] w-full object-cover"
@@ -149,7 +151,8 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
 
       {/* Newsroom preview */}
       {newsroomPosts.length > 0 && (
-        <section className="mx-auto max-w-[1600px] px-6 py-24 lg:px-12">
+        <section className="px-6 py-24 lg:px-12">
+          <div className="mx-auto max-w-[1600px]">
           <div className="flex items-end justify-between border-b border-[#d9ddde] pb-6">
             <div>
               <p className="eyebrow">Latest insights</p>
@@ -177,6 +180,7 @@ export function HomePage({ practiceAreas, newsroomPosts }: HomeProps) {
                 </span>
               </article>
             ))}
+          </div>
           </div>
         </section>
       )}

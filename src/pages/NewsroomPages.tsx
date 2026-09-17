@@ -16,7 +16,8 @@ export function NewsroomPage({ posts }: NewsroomProps) {
         </p>
       </PageHeader>
 
-      <section className="mx-auto max-w-[1600px] px-6 py-20 lg:px-12">
+      <section className="px-6 py-20 lg:px-12">
+        <div className="mx-auto max-w-[1600px]">
         {posts.length === 0 ? (
           <p className="py-20 text-center text-sm text-[#687277]">No articles have been published yet.</p>
         ) : (
@@ -59,6 +60,7 @@ export function NewsroomPage({ posts }: NewsroomProps) {
             </div>
           </div>
         )}
+        </div>
       </section>
     </main>
   );
@@ -97,8 +99,8 @@ export function NewsDetailPage({ post, otherPosts }: NewsDetailProps) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1600px] px-6 py-16 lg:px-12">
-        <div className="prose-content mx-auto max-w-[800px] whitespace-pre-wrap text-[15px] leading-8 text-[#3b4246]">{post.body}</div>
+      <section className="px-6 py-16 lg:px-12">
+        <div className="prose-content mx-auto max-w-[1600px] w-full whitespace-pre-wrap text-[15px] leading-8 text-[#3b4246]">{post.body}</div>
       </section>
 
       <section className="border-t border-[#d9ddde] bg-[#f0f3f3] px-6 py-16 lg:px-12">

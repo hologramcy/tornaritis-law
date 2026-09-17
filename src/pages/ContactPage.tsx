@@ -62,7 +62,8 @@ export function ContactPage() {
         <p>Tell us where you want to go. We will help you find the clearest way there.</p>
       </PageHeader>
 
-      <section className="mx-auto grid max-w-[1600px] gap-12 px-6 py-20 lg:grid-cols-[.85fr_1.15fr] lg:px-12">
+      <section className="px-6 py-20 lg:px-12">
+        <div className="mx-auto grid max-w-[1600px] gap-12 lg:grid-cols-[.85fr_1.15fr]">
         {/* Contact info */}
         <div>
           <p className="eyebrow">Our offices</p>
@@ -196,6 +197,7 @@ export function ContactPage() {
               {status === 'submitting' ? 'Sending...' : formType === 'appointment' ? 'Request appointment' : 'Send enquiry'}
             </button>
           </form>
+        </div>
         </div>
       </section>
     </main>

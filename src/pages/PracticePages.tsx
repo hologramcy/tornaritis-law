@@ -17,8 +17,8 @@ export function PracticePage({ practiceAreas }: PracticeProps) {
         </p>
       </PageHeader>
 
-      <section className="mx-auto max-w-[1600px] px-6 py-20 lg:px-12">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <section className="px-6 py-20 lg:px-12">
+        <div className="mx-auto max-w-[1600px] grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {practiceAreas.map((area, i) => (
             <button
               key={area.id}
@@ -89,8 +89,8 @@ export function PracticeDetailPage({ area, otherAreas }: PracticeDetailProps) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1600px] px-6 py-16 lg:px-12">
-        <div className="prose-content w-full whitespace-pre-wrap text-[15px] leading-8 text-[#3b4246]">
+      <section className="px-6 py-16 lg:px-12">
+        <div className="prose-content mx-auto max-w-[1600px] w-full whitespace-pre-wrap text-[15px] leading-8 text-[#3b4246]">
           {area.body}
         </div>
       </section>
