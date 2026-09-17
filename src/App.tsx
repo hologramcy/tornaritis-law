@@ -53,7 +53,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!seeded) return;
+    if (!seeded || route.page === 'admin') return;
     const fetchAll = async () => {
       setDataLoading(true);
       const [areas, posts, team] = await Promise.all([
@@ -67,7 +67,7 @@ function App() {
       setDataLoading(false);
     };
     fetchAll();
-  }, [seeded]);
+  }, [seeded, route.page]);
 
   if (route.page === 'admin') {
     if (authLoading) {
