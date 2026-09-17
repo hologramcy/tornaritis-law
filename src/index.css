@@ -244,3 +244,36 @@ body {
   border-color: #b90046;
   box-shadow: 0 1px 0 0 #b90046;
 }
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, #f0f3f3 25%, #e7ecec 37%, #f0f3f3 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+/* CMS table */
+.cms-table { width: 100%; border-collapse: collapse; }
+.cms-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #879195;
+  border-bottom: 1px solid #e1e5e5;
+  background: #f7f8f8;
+}
+.cms-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #eef0f0;
+  font-size: 0.875rem;
+  color: #273237;
+}
+.cms-table tr:hover td { background: #fafbfb; }
+
+/* CMS sidebar overlay */
+.sidebar-overlay {
+  animation: fadeIn 0.2s ease-out;
+}

@@ -1,146 +1,133 @@
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, Pencil, Eye, EyeOff, Briefcase } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { PracticeArea } from '@/lib/types';
+import { PageHeader, Badge, EmptyState, LoadingState, TextField, TextArea, NumberField, Toggle, PrimaryButton, SecondaryButton } from '@/components/admin/Fields';
+import { Modal } from '@/components/admin/Modal';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
+import { showToast } from '@/components/admin/Toast';
 
-const emptyForm = {
-  slug: '',
-  title: '',
-  summary: '',
-  body: '',
-  display_order: 0,
-  is_published: false,
-};
+const emptyForm = { slug: '', title: '', summary: '', body: '', display_order: 0, is_published: false };
 
 export function AdminPracticeAreas() {
   const [areas, setAreas] = useState<PracticeArea[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<PracticeArea | null>(null);
-  const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const fetchAreas = async () => {
     setLoading(true);
-    const { data } = await supabase.from('practice_areas').select('*').order('display_order');
+    const { data, error } = await supabase.from('practice_areas').select('*').order('display_order');
+    if (error) { showToast('Failed to load practice areas', 'error'); }
     setAreas(data ?? []);
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchAreas();
-  }, []);
+  useEffect(() => { fetchAreas(); }, []);
 
-  const startEdit = (area: PracticeArea) => {
+  const openNew = () => { setEditing(null); setForm({ ...emptyForm, display_order: areas.length + 1 }); setModalOpen(true); };
+  const openEdit = (area: PracticeArea) => {
     setEditing(area);
-    setForm({
-      slug: area.slug,
-      title: area.title,
-      summary: area.summary,
-      body: area.body,
-      display_order: area.display_order,
-      is_published: area.is_published,
-    });
-    setShowForm(true);
-  };
-
-  const startNew = () => {
-    setEditing(null);
-    setForm({ ...emptyForm, display_order: areas.length + 1 });
-    setShowForm(true);
+    setForm({ slug: area.slug, title: area.title, summary: area.summary, body: area.body, display_order: area.display_order, is_published: area.is_published });
+    setModalOpen(true);
   };
 
   const save = async () => {
+    if (!form.title.trim()) { showToast('Title is required', 'error'); return; }
     setSaving(true);
-    if (editing) {
-      await supabase.from('practice_areas').update(form).eq('id', editing.id);
-    } else {
-      await supabase.from('practice_areas').insert({ ...form, locale: 'en' });
-    }
-    setSaving(false);
-    setShowForm(false);
-    fetchAreas();
+    const { error } = editing
+      ? await supabase.from('practice_areas').update(form).eq('id', editing.id)
+      : await supabase.from('practice_areas').insert({ ...form, locale: 'en' });
+    if (error) { showToast('Failed to save', 'error'); setSaving(false); return; }
+    showToast(editing ? 'Practice area updated' : 'Practice area created');
+    setSaving(false); setModalOpen(false); fetchAreas();
   };
 
   const remove = async (id: string) => {
-    await supabase.from('practice_areas').delete().eq('id', id);
-    fetchAreas();
+    const { error } = await supabase.from('practice_areas').delete().eq('id', id);
+    if (error) { showToast('Failed to delete', 'error'); return; }
+    showToast('Practice area deleted'); fetchAreas();
   };
 
   const togglePublished = async (area: PracticeArea) => {
-    await supabase.from('practice_areas').update({ is_published: !area.is_published }).eq('id', area.id);
-    fetchAreas();
+    const { error } = await supabase.from('practice_areas').update({ is_published: !area.is_published }).eq('id', area.id);
+    if (error) { showToast('Failed to update', 'error'); return; }
+    showToast(area.is_published ? 'Unpublished' : 'Published'); fetchAreas();
   };
 
   return (
     <div>
-      <button
-        onClick={startNew}
-        className="mb-6 flex items-center gap-2 bg-[#b90046] px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#930038] hover:shadow-lg hover:shadow-[#b90046]/20"
-      >
-        <Plus size={16} /> New practice area
-      </button>
-
-      {showForm && (
-        <div className="mb-8 rounded-2xl border border-[#e1e5e5] bg-white p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-bold text-[#273237]">{editing ? 'Edit practice area' : 'New practice area'}</h3>
-            <button onClick={() => setShowForm(false)}><X size={18} className="text-[#687277]" /></button>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Title
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Slug (URL)
-              <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Display order
-              <input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="flex items-center gap-2 pt-6 text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">
-              <input type="checkbox" checked={form.is_published} onChange={(e) => setForm({ ...form, is_published: e.target.checked })} />
-              Published
-            </label>
-          </div>
-          <label className="mt-4 block text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Summary
-            <textarea rows={2} value={form.summary} onChange={(e) => setForm({ ...form, summary: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-          </label>
-          <label className="mt-4 block text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Body (full description)
-            <textarea rows={6} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-          </label>
-          <button onClick={save} disabled={saving} className="mt-4 bg-[#b90046] px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#930038] hover:shadow-lg hover:shadow-[#b90046]/20 disabled:opacity-50">
-            {saving ? 'Saving...' : 'Save'}
-          </button>
-        </div>
-      )}
+      <PageHeader
+        title="Practice Areas"
+        description="Manage the practice areas displayed on your website"
+        actions={<PrimaryButton onClick={openNew}><Plus size={16} /> New practice area</PrimaryButton>}
+      />
 
       {loading ? (
-        <p className="text-sm text-[#687277]">Loading...</p>
+        <LoadingState />
+      ) : areas.length === 0 ? (
+        <EmptyState icon={Briefcase} title="No practice areas yet" message="Create your first practice area to display it on your website." />
       ) : (
-        <div className="space-y-3">
-          {areas.map((area) => (
-            <div key={area.id} className="flex items-center justify-between border border-[#e1e5e5] bg-white p-4">
-              <div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-[#b90046]">{String(area.display_order).padStart(2, '0')}</span>
-                  <p className="font-medium text-[#273237]">{area.title}</p>
-                  <span className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase ${area.is_published ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
-                    {area.is_published ? 'Published' : 'Draft'}
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-[#687277]">/{area.slug}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button onClick={() => togglePublished(area)} className="text-xs font-bold uppercase tracking-[0.1em] text-[#687277] hover:text-[#b90046]">
-                  {area.is_published ? 'Unpublish' : 'Publish'}
-                </button>
-                <button onClick={() => startEdit(area)} className="text-xs font-bold uppercase tracking-[0.1em] text-[#687277] hover:text-[#b90046]">Edit</button>
-                <button onClick={() => remove(area.id)} className="text-[#879195] hover:text-[#b90046]"><Trash2 size={15} /></button>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-hidden rounded-2xl border border-[#e1e5e5] bg-white">
+          <table className="cms-table">
+            <thead><tr><th>Order</th><th>Title</th><th>Slug</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              {areas.map((area) => (
+                <tr key={area.id}>
+                  <td className="font-serif text-lg text-[#b90046]">{String(area.display_order).padStart(2, '0')}</td>
+                  <td className="font-medium">{area.title}</td>
+                  <td className="text-[#879195]">/{area.slug}</td>
+                  <td><Badge variant={area.is_published ? 'success' : 'neutral'}>{area.is_published ? 'Published' : 'Draft'}</Badge></td>
+                  <td>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => togglePublished(area)} className="rounded-md p-1.5 text-[#a5afb2] transition hover:text-[#b90046]" title={area.is_published ? 'Unpublish' : 'Publish'}>{area.is_published ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                      <button onClick={() => openEdit(area)} className="rounded-md p-1.5 text-[#a5afb2] transition hover:text-[#b90046]" title="Edit"><Pencil size={16} /></button>
+                      <button onClick={() => setDeleteId(area.id)} className="rounded-md p-1.5 text-[#a5afb2] transition hover:text-red-500" title="Delete"><Trash2 size={16} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editing ? 'Edit practice area' : 'New practice area'}
+        size="lg"
+        footer={
+          <>
+            <SecondaryButton onClick={() => setModalOpen(false)}>Cancel</SecondaryButton>
+            <PrimaryButton onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</PrimaryButton>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField label="Title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} required />
+            <TextField label="Slug (URL)" hint="Auto-generated from title" value={form.slug} onChange={(v) => setForm({ ...form, slug: v.toLowerCase().replace(/\s+/g, '-') })} placeholder="corporate-commercial" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <NumberField label="Display order" value={form.display_order} onChange={(v) => setForm({ ...form, display_order: v })} />
+            <div className="pt-6"><Toggle checked={form.is_published} onChange={(v) => setForm({ ...form, is_published: v })} label="Published" /></div>
+          </div>
+          <TextArea label="Summary" value={form.summary} onChange={(v) => setForm({ ...form, summary: v })} rows={2} placeholder="Short description shown in cards and listings" />
+          <TextArea label="Full description" value={form.body} onChange={(v) => setForm({ ...form, body: v })} rows={6} placeholder="Full page content" />
+        </div>
+      </Modal>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => { if (deleteId) remove(deleteId); }}
+        title="Delete practice area"
+        message="Are you sure you want to delete this practice area? This will remove it from your website."
+      />
     </div>
   );
 }

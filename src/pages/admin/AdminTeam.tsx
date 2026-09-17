@@ -1,157 +1,135 @@
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, Pencil, Eye, EyeOff, Users } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { TeamMember } from '@/lib/types';
+import { PageHeader, Badge, EmptyState, LoadingState, TextField, TextArea, NumberField, Toggle, PrimaryButton, SecondaryButton } from '@/components/admin/Fields';
+import { Modal } from '@/components/admin/Modal';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
+import { showToast } from '@/components/admin/Toast';
 
-const emptyForm = {
-  name: '',
-  title: '',
-  email: '',
-  bio: '',
-  image_url: '',
-  display_order: 0,
-  is_published: false,
-};
+const emptyForm = { name: '', title: '', email: '', bio: '', image_url: '', display_order: 0, is_published: false };
 
 export function AdminTeam() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<TeamMember | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const fetchMembers = async () => {
     setLoading(true);
-    const { data } = await supabase.from('team_members').select('*').order('display_order');
+    const { data, error } = await supabase.from('team_members').select('*').order('display_order');
+    if (error) { showToast('Failed to load team members', 'error'); }
     setMembers(data ?? []);
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchMembers();
-  }, []);
+  useEffect(() => { fetchMembers(); }, []);
 
-  const startEdit = (m: TeamMember) => {
+  const openNew = () => { setEditing(null); setForm({ ...emptyForm, display_order: members.length + 1 }); setModalOpen(true); };
+  const openEdit = (m: TeamMember) => {
     setEditing(m);
-    setForm({
-      name: m.name,
-      title: m.title,
-      email: m.email,
-      bio: m.bio,
-      image_url: m.image_url,
-      display_order: m.display_order,
-      is_published: m.is_published,
-    });
-    setShowForm(true);
-  };
-
-  const startNew = () => {
-    setEditing(null);
-    setForm({ ...emptyForm, display_order: members.length + 1 });
-    setShowForm(true);
+    setForm({ name: m.name, title: m.title, email: m.email, bio: m.bio, image_url: m.image_url, display_order: m.display_order, is_published: m.is_published });
+    setModalOpen(true);
   };
 
   const save = async () => {
+    if (!form.name.trim()) { showToast('Name is required', 'error'); return; }
     setSaving(true);
-    if (editing) {
-      await supabase.from('team_members').update(form).eq('id', editing.id);
-    } else {
-      await supabase.from('team_members').insert({ ...form, locale: 'en' });
-    }
-    setSaving(false);
-    setShowForm(false);
-    fetchMembers();
+    const { error } = editing
+      ? await supabase.from('team_members').update(form).eq('id', editing.id)
+      : await supabase.from('team_members').insert({ ...form, locale: 'en' });
+    if (error) { showToast('Failed to save', 'error'); setSaving(false); return; }
+    showToast(editing ? 'Team member updated' : 'Team member added');
+    setSaving(false); setModalOpen(false); fetchMembers();
   };
 
   const remove = async (id: string) => {
-    await supabase.from('team_members').delete().eq('id', id);
-    fetchMembers();
+    const { error } = await supabase.from('team_members').delete().eq('id', id);
+    if (error) { showToast('Failed to delete', 'error'); return; }
+    showToast('Team member removed'); fetchMembers();
   };
 
   const togglePublished = async (m: TeamMember) => {
-    await supabase.from('team_members').update({ is_published: !m.is_published }).eq('id', m.id);
-    fetchMembers();
+    const { error } = await supabase.from('team_members').update({ is_published: !m.is_published }).eq('id', m.id);
+    if (error) { showToast('Failed to update', 'error'); return; }
+    showToast(m.is_published ? 'Unpublished' : 'Published'); fetchMembers();
   };
 
   return (
     <div>
-      <button
-        onClick={startNew}
-        className="mb-6 flex items-center gap-2 bg-[#b90046] px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#930038] hover:shadow-lg hover:shadow-[#b90046]/20"
-      >
-        <Plus size={16} /> New team member
-      </button>
-
-      {showForm && (
-        <div className="mb-8 rounded-2xl border border-[#e1e5e5] bg-white p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-bold text-[#273237]">{editing ? 'Edit team member' : 'New team member'}</h3>
-            <button onClick={() => setShowForm(false)}><X size={18} className="text-[#687277]" /></button>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Name
-              <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Title / Position
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Email
-              <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Image URL
-              <input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Display order
-              <input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="flex items-center gap-2 pt-6 text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">
-              <input type="checkbox" checked={form.is_published} onChange={(e) => setForm({ ...form, is_published: e.target.checked })} />
-              Published
-            </label>
-          </div>
-          <label className="mt-4 block text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Bio
-            <textarea rows={5} value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-          </label>
-          <button onClick={save} disabled={saving} className="mt-4 bg-[#b90046] px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#930038] hover:shadow-lg hover:shadow-[#b90046]/20 disabled:opacity-50">
-            {saving ? 'Saving...' : 'Save'}
-          </button>
-        </div>
-      )}
+      <PageHeader
+        title="Team Members"
+        description="Manage lawyer and staff profiles displayed on your website"
+        actions={<PrimaryButton onClick={openNew}><Plus size={16} /> Add team member</PrimaryButton>}
+      />
 
       {loading ? (
-        <p className="text-sm text-[#687277]">Loading...</p>
+        <LoadingState />
+      ) : members.length === 0 ? (
+        <EmptyState icon={Users} title="No team members yet" message="Add your first team member to display their profile on your website." />
       ) : (
-        <div className="space-y-3">
-          {members.map((m) => (
-            <div key={m.id} className="flex items-center justify-between border border-[#e1e5e5] bg-white p-4">
-              <div className="flex items-center gap-4">
-                {m.image_url ? (
-                  <img src={m.image_url} alt={m.name} className="h-12 w-12 rounded-full object-cover" />
-                ) : (
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#e9ecec] font-serif text-lg text-[#a5afb2]">{m.name.charAt(0)}</div>
-                )}
-                <div>
-                  <div className="flex items-center gap-3">
-                    <p className="font-medium text-[#273237]">{m.name}</p>
-                    <span className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase ${m.is_published ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
-                      {m.is_published ? 'Published' : 'Draft'}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#687277]">{m.title}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <button onClick={() => togglePublished(m)} className="text-xs font-bold uppercase tracking-[0.1em] text-[#687277] hover:text-[#b90046]">
-                  {m.is_published ? 'Unpublish' : 'Publish'}
-                </button>
-                <button onClick={() => startEdit(m)} className="text-xs font-bold uppercase tracking-[0.1em] text-[#687277] hover:text-[#b90046]">Edit</button>
-                <button onClick={() => remove(m.id)} className="text-[#879195] hover:text-[#b90046]"><Trash2 size={15} /></button>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-hidden rounded-2xl border border-[#e1e5e5] bg-white">
+          <table className="cms-table">
+            <thead><tr><th></th><th>Name</th><th>Title</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              {members.map((m) => (
+                <tr key={m.id}>
+                  <td>
+                    {m.image_url
+                      ? <img src={m.image_url} alt={m.name} className="h-10 w-10 rounded-full object-cover" />
+                      : <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e9ecec] font-serif text-base text-[#a5afb2]">{m.name.charAt(0)}</div>}
+                  </td>
+                  <td className="font-medium">{m.name}</td>
+                  <td className="text-[#687777]">{m.title}</td>
+                  <td><Badge variant={m.is_published ? 'success' : 'neutral'}>{m.is_published ? 'Published' : 'Draft'}</Badge></td>
+                  <td>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => togglePublished(m)} className="rounded-md p-1.5 text-[#a5afb2] transition hover:text-[#b90046]">{m.is_published ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                      <button onClick={() => openEdit(m)} className="rounded-md p-1.5 text-[#a5afb2] transition hover:text-[#b90046]"><Pencil size={16} /></button>
+                      <button onClick={() => setDeleteId(m.id)} className="rounded-md p-1.5 text-[#a5afb2] transition hover:text-red-500"><Trash2 size={16} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editing ? 'Edit team member' : 'Add team member'}
+        size="lg"
+        footer={<><SecondaryButton onClick={() => setModalOpen(false)}>Cancel</SecondaryButton><PrimaryButton onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</PrimaryButton></>}
+      >
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField label="Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
+            <TextField label="Title / Position" value={form.title} onChange={(v) => setForm({ ...form, title: v })} placeholder="Partner, Senior Associate..." />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+            <TextField label="Image URL" value={form.image_url} onChange={(v) => setForm({ ...form, image_url: v })} placeholder="https://..." hint="Direct link to a photo" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <NumberField label="Display order" value={form.display_order} onChange={(v) => setForm({ ...form, display_order: v })} />
+            <div className="pt-6"><Toggle checked={form.is_published} onChange={(v) => setForm({ ...form, is_published: v })} label="Published" /></div>
+          </div>
+          <TextArea label="Bio" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} rows={5} />
+        </div>
+      </Modal>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => { if (deleteId) remove(deleteId); }}
+        title="Delete team member"
+        message="Are you sure you want to remove this team member from your website?"
+      />
     </div>
   );
 }

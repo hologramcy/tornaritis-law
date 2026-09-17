@@ -1,166 +1,138 @@
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, Pencil, Eye, EyeOff, Newspaper, Search } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { NewsroomPost } from '@/lib/types';
+import { PageHeader, Badge, EmptyState, LoadingState, TextField, TextArea, SelectField, Toggle, PrimaryButton, SecondaryButton } from '@/components/admin/Fields';
+import { Modal } from '@/components/admin/Modal';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
+import { showToast } from '@/components/admin/Toast';
 
-const emptyForm = {
-  slug: '',
-  title: '',
-  excerpt: '',
-  body: '',
-  category: 'Insight',
-  author_name: '',
-  is_published: false,
-};
-
+const emptyForm = { slug: '', title: '', excerpt: '', body: '', category: 'Insight', author_name: '', is_published: false };
 const categories = ['Insight', 'Legal update', 'Case study', 'News', 'Perspective'];
 
 export function AdminNewsroom() {
   const [posts, setPosts] = useState<NewsroomPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<NewsroomPost | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   const fetchPosts = async () => {
     setLoading(true);
-    const { data } = await supabase.from('newsroom_posts').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('newsroom_posts').select('*').order('created_at', { ascending: false });
+    if (error) { showToast('Failed to load articles', 'error'); }
     setPosts(data ?? []);
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  useEffect(() => { fetchPosts(); }, []);
 
-  const startEdit = (post: NewsroomPost) => {
+  const filtered = posts.filter((p) => !search || p.title.toLowerCase().includes(search.toLowerCase()));
+
+  const openNew = () => { setEditing(null); setForm(emptyForm); setModalOpen(true); };
+  const openEdit = (post: NewsroomPost) => {
     setEditing(post);
-    setForm({
-      slug: post.slug,
-      title: post.title,
-      excerpt: post.excerpt,
-      body: post.body,
-      category: post.category,
-      author_name: post.author_name,
-      is_published: post.is_published,
-    });
-    setShowForm(true);
-  };
-
-  const startNew = () => {
-    setEditing(null);
-    setForm(emptyForm);
-    setShowForm(true);
+    setForm({ slug: post.slug, title: post.title, excerpt: post.excerpt, body: post.body, category: post.category, author_name: post.author_name, is_published: post.is_published });
+    setModalOpen(true);
   };
 
   const save = async () => {
+    if (!form.title.trim()) { showToast('Title is required', 'error'); return; }
     setSaving(true);
-    const payload = {
-      ...form,
-      published_at: form.is_published ? new Date().toISOString() : null,
-    };
-    if (editing) {
-      await supabase.from('newsroom_posts').update(payload).eq('id', editing.id);
-    } else {
-      await supabase.from('newsroom_posts').insert({ ...payload, locale: 'en' });
-    }
-    setSaving(false);
-    setShowForm(false);
-    fetchPosts();
+    const payload = { ...form, published_at: form.is_published ? new Date().toISOString() : null };
+    const { error } = editing
+      ? await supabase.from('newsroom_posts').update(payload).eq('id', editing.id)
+      : await supabase.from('newsroom_posts').insert({ ...payload, locale: 'en' });
+    if (error) { showToast('Failed to save', 'error'); setSaving(false); return; }
+    showToast(editing ? 'Article updated' : 'Article created');
+    setSaving(false); setModalOpen(false); fetchPosts();
   };
 
   const remove = async (id: string) => {
-    await supabase.from('newsroom_posts').delete().eq('id', id);
-    fetchPosts();
+    const { error } = await supabase.from('newsroom_posts').delete().eq('id', id);
+    if (error) { showToast('Failed to delete', 'error'); return; }
+    showToast('Article deleted'); fetchPosts();
   };
 
   const togglePublished = async (post: NewsroomPost) => {
-    await supabase
-      .from('newsroom_posts')
-      .update({
-        is_published: !post.is_published,
-        published_at: !post.is_published ? new Date().toISOString() : post.published_at,
-      })
-      .eq('id', post.id);
-    fetchPosts();
+    const { error } = await supabase.from('newsroom_posts').update({ is_published: !post.is_published, published_at: !post.is_published ? new Date().toISOString() : post.published_at }).eq('id', post.id);
+    if (error) { showToast('Failed to update', 'error'); return; }
+    showToast(post.is_published ? 'Unpublished' : 'Published'); fetchPosts();
   };
 
   return (
     <div>
-      <button
-        onClick={startNew}
-        className="mb-6 flex items-center gap-2 bg-[#b90046] px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#930038] hover:shadow-lg hover:shadow-[#b90046]/20"
-      >
-        <Plus size={16} /> New article
-      </button>
-
-      {showForm && (
-        <div className="mb-8 rounded-2xl border border-[#e1e5e5] bg-white p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-bold text-[#273237]">{editing ? 'Edit article' : 'New article'}</h3>
-            <button onClick={() => setShowForm(false)}><X size={18} className="text-[#687277]" /></button>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Title
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Slug (URL)
-              <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Category
-              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10">
-                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </label>
-            <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Author
-              <input value={form.author_name} onChange={(e) => setForm({ ...form, author_name: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-            </label>
-          </div>
-          <label className="mt-4 block text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Excerpt
-            <textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-          </label>
-          <label className="mt-4 block text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">Body
-            <textarea rows={8} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="mt-2 block w-full rounded-lg border border-[#d9ddde] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
-          </label>
-          <label className="mt-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#536066]">
-            <input type="checkbox" checked={form.is_published} onChange={(e) => setForm({ ...form, is_published: e.target.checked })} />
-            Published
-          </label>
-          <button onClick={save} disabled={saving} className="mt-4 bg-[#b90046] px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#930038] hover:shadow-lg hover:shadow-[#b90046]/20 disabled:opacity-50">
-            {saving ? 'Saving...' : 'Save'}
-          </button>
-        </div>
-      )}
+      <PageHeader
+        title="Newsroom"
+        description="Create and manage articles for your website's newsroom"
+        actions={<PrimaryButton onClick={openNew}><Plus size={16} /> New article</PrimaryButton>}
+      />
 
       {loading ? (
-        <p className="text-sm text-[#687277]">Loading...</p>
+        <LoadingState />
       ) : posts.length === 0 ? (
-        <p className="py-12 text-center text-sm text-[#687277]">No articles yet. Create one to get started.</p>
+        <EmptyState icon={Newspaper} title="No articles yet" message="Write your first article to publish it in your newsroom." />
       ) : (
-        <div className="space-y-3">
-          {posts.map((post) => (
-            <div key={post.id} className="flex items-center justify-between border border-[#e1e5e5] bg-white p-4">
-              <div>
-                <div className="flex items-center gap-3">
-                  <p className="font-medium text-[#273237]">{post.title}</p>
-                  <span className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase ${post.is_published ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
-                    {post.is_published ? 'Published' : 'Draft'}
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-[#687277]">{post.category} · /{post.slug}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button onClick={() => togglePublished(post)} className="text-xs font-bold uppercase tracking-[0.1em] text-[#687277] hover:text-[#b90046]">
-                  {post.is_published ? 'Unpublish' : 'Publish'}
-                </button>
-                <button onClick={() => startEdit(post)} className="text-xs font-bold uppercase tracking-[0.1em] text-[#687277] hover:text-[#b90046]">Edit</button>
-                <button onClick={() => remove(post.id)} className="text-[#879195] hover:text-[#b90046]"><Trash2 size={15} /></button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="mb-4 relative">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a5afb2]" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search articles..." className="w-full max-w-sm rounded-lg border border-[#d9ddde] bg-white py-2.5 pl-9 pr-3 text-sm outline-none transition focus:border-[#b90046] focus:ring-2 focus:ring-[#b90046]/10" />
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-[#e1e5e5] bg-white">
+            <table className="cms-table">
+              <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                {filtered.map((post) => (
+                  <tr key={post.id}>
+                    <td className="font-medium">{post.title}</td>
+                    <td><Badge variant="info">{post.category}</Badge></td>
+                    <td className="text-[#687777]">{post.author_name || '—'}</td>
+                    <td><Badge variant={post.is_published ? 'success' : 'neutral'}>{post.is_published ? 'Published' : 'Draft'}</Badge></td>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => togglePublished(post)} className="rounded-md p-1.5 text-[#a5afb2] transition hover:text-[#b90046]">{post.is_published ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                        <button onClick={() => openEdit(post)} className="rounded-md p-1.5 text-[#a5afb2] transition hover:text-[#b90046]"><Pencil size={16} /></button>
+                        <button onClick={() => setDeleteId(post.id)} className="rounded-md p-1.5 text-[#a5afb2] transition hover:text-red-500"><Trash2 size={16} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editing ? 'Edit article' : 'New article'}
+        size="lg"
+        footer={<><SecondaryButton onClick={() => setModalOpen(false)}>Cancel</SecondaryButton><PrimaryButton onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</PrimaryButton></>}
+      >
+        <div className="space-y-4">
+          <TextField label="Title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} required />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField label="Slug (URL)" value={form.slug} onChange={(v) => setForm({ ...form, slug: v.toLowerCase().replace(/\s+/g, '-') })} placeholder="my-article" />
+            <SelectField label="Category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={categories.map((c) => ({ value: c, label: c }))} />
+          </div>
+          <TextField label="Author" value={form.author_name} onChange={(v) => setForm({ ...form, author_name: v })} placeholder="Author name" />
+          <TextArea label="Excerpt" value={form.excerpt} onChange={(v) => setForm({ ...form, excerpt: v })} rows={2} placeholder="Short summary shown in listings" />
+          <TextArea label="Body" value={form.body} onChange={(v) => setForm({ ...form, body: v })} rows={8} placeholder="Full article content" />
+          <Toggle checked={form.is_published} onChange={(v) => setForm({ ...form, is_published: v })} label="Published" />
+        </div>
+      </Modal>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => { if (deleteId) remove(deleteId); }}
+        title="Delete article"
+        message="Are you sure you want to permanently delete this article?"
+      />
     </div>
   );
 }
